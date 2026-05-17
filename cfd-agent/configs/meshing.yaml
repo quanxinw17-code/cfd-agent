@@ -1,0 +1,3 @@
+mesher: fluent_meshing
+workflow: watertight_geometry
+fluent_executable_env: FLUENT_EXECUTABLE

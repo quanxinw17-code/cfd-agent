@@ -1,0 +1,130 @@
+{
+  "task_id": "sphere_external_flow_001",
+  "status": "success",
+  "stage": "completed",
+  "dry_run": false,
+  "from_stage": "fluent_setup",
+  "to_stage": "report",
+  "physics_summary": {
+    "reynolds_number": 205422.0234768027,
+    "mach_number": 0.08823529411764706,
+    "flow_regime": "turbulent",
+    "compressibility": "incompressible",
+    "recommended_solver": "pressure_based",
+    "recommended_turbulence_model": "k_omega_sst"
+  },
+  "files": {
+    "solidworks_script": "outputs\\sphere_001\\solidworks\\create_model.py",
+    "solidworks_native": "outputs\\sphere_001\\solidworks\\part.sldprt",
+    "geometry": "outputs\\sphere_001\\solidworks\\geometry.step",
+    "parasolid": "outputs\\sphere_001\\solidworks\\geometry.x_t",
+    "geometry_metadata": "outputs\\sphere_001\\solidworks\\geometry_metadata.json",
+    "spaceclaim_script": "outputs\\sphere_001\\spaceclaim\\create_external_domain.py",
+    "fluid_domain": "outputs\\sphere_001\\spaceclaim\\fluid_domain.step",
+    "named_selections": "outputs\\sphere_001\\spaceclaim\\named_selections.json",
+    "mesh": "outputs\\sphere_001\\meshing\\mesh.msh.h5",
+    "mesh_case": "outputs\\sphere_001\\meshing\\mesh_case.cas.h5",
+    "fluent_meshing_journal": "outputs\\sphere_001\\meshing\\fluent_meshing_watertight.jou",
+    "mesh_quality_report": "outputs\\sphere_001\\meshing\\mesh_quality_report.json",
+    "fluent_setup_journal": "outputs\\sphere_001\\fluent\\fluent_setup.jou",
+    "fluent_solve_journal": "outputs\\sphere_001\\fluent\\fluent_solve.jou",
+    "case": "outputs\\sphere_001\\fluent\\case.cas.h5",
+    "data": "outputs\\sphere_001\\fluent\\data.dat.h5",
+    "fluent_log": "outputs\\sphere_001\\fluent\\fluent.log",
+    "residuals": "outputs\\sphere_001\\postprocess\\residuals.csv",
+    "forces": "outputs\\sphere_001\\postprocess\\forces.csv",
+    "pressure_contour": null,
+    "velocity_contour": null,
+    "report": "outputs\\sphere_001\\report\\report.md"
+  },
+  "results": {
+    "drag_coefficient": null,
+    "lift_coefficient": null
+  },
+  "errors": [],
+  "stage_outputs": {
+    "validate": {
+      "success": true,
+      "physics_summary": {
+        "reynolds_number": 205422.0234768027,
+        "mach_number": 0.08823529411764706,
+        "flow_regime": "turbulent",
+        "compressibility": "incompressible",
+        "recommended_solver": "pressure_based",
+        "recommended_turbulence_model": "k_omega_sst"
+      }
+    },
+    "solidworks": {
+      "script_file": "outputs\\sphere_001\\solidworks\\create_model.py",
+      "native_file": "outputs\\sphere_001\\solidworks\\part.sldprt",
+      "step_file": "outputs\\sphere_001\\solidworks\\geometry.step",
+      "parasolid_file": "outputs\\sphere_001\\solidworks\\geometry.x_t",
+      "planned_native_file": null,
+      "planned_step_file": null,
+      "planned_parasolid_file": null,
+      "metadata_file": "outputs\\sphere_001\\solidworks\\geometry_metadata.json",
+      "success": true,
+      "error": null
+    },
+    "spaceclaim": {
+      "spaceclaim_script": "outputs\\sphere_001\\spaceclaim\\create_external_domain.py",
+      "scdoc_file": "outputs\\sphere_001\\spaceclaim\\fluid_domain.scdoc",
+      "pmdb_file": null,
+      "step_file": "outputs\\sphere_001\\spaceclaim\\fluid_domain.step",
+      "planned_scdoc_file": null,
+      "planned_pmdb_file": null,
+      "planned_step_file": null,
+      "named_selections_file": "outputs\\sphere_001\\spaceclaim\\named_selections.json",
+      "success": true,
+      "error": null
+    },
+    "meshing": {
+      "meshing_journal": "outputs\\sphere_001\\meshing\\fluent_meshing_watertight.jou",
+      "mesh_file": "outputs\\sphere_001\\meshing\\mesh.msh.h5",
+      "case_file": "outputs\\sphere_001\\meshing\\mesh_case.cas.h5",
+      "planned_mesh_file": null,
+      "planned_case_file": null,
+      "quality_report": {
+        "cell_count": null,
+        "max_skewness": null,
+        "min_orthogonal_quality": null,
+        "passed": null
+      },
+      "quality_report_file": "outputs\\sphere_001\\meshing\\mesh_quality_report.json",
+      "success": true,
+      "error": null
+    },
+    "fluent_setup": {
+      "success": true,
+      "setup_journal": "outputs\\sphere_001\\fluent\\fluent_setup.jou",
+      "solve_journal": "outputs\\sphere_001\\fluent\\fluent_solve.jou",
+      "error": null
+    },
+    "solver": {
+      "case_file": "outputs\\sphere_001\\fluent\\case.cas.h5",
+      "data_file": "outputs\\sphere_001\\fluent\\data.dat.h5",
+      "log_file": "outputs\\sphere_001\\fluent\\fluent.log",
+      "success": true,
+      "error": null
+    },
+    "report": {
+      "success": true,
+      "report_file": "outputs\\sphere_001\\report\\report.md",
+      "error": null
+    },
+    "postprocess": {
+      "success": true,
+      "residuals_csv": "outputs\\sphere_001\\postprocess\\residuals.csv",
+      "forces_csv": "outputs\\sphere_001\\postprocess\\forces.csv",
+      "figures": {
+        "pressure_contour": null,
+        "velocity_contour": null
+      },
+      "metrics": {
+        "drag_coefficient": null,
+        "lift_coefficient": null
+      },
+      "error": null
+    }
+  }
+}

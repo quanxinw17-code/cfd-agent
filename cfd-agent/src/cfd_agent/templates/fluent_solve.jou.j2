@@ -1,0 +1,16 @@
+; CFD Agent Fluent solve journal
+; Read the prepared case, iterate, and save case/data.
+/file/read-case "{{ case_file }}"
+
+; Iterate
+/solve/iterate {{ max_iterations }}
+
+; Save final data
+/file/write-case-data "{{ case_file }}"
+yes
+
+; Export placeholders for real Fluent reports when monitors are configured.
+; Residual and force CSV exports should be added once the target Fluent version is known.
+/exit
+yes
+

@@ -1,0 +1,18 @@
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.j2 text eol=lf
+*.jou text eol=lf
+*.csv text eol=lf
+*.log text eol=lf
+*.msh text eol=lf
+*.h5 binary
+*.SLDPRT binary
+*.scdoc binary
+*.step text eol=lf
+*.stp text eol=lf
+*.x_t text eol=lf

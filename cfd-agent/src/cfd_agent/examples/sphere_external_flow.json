@@ -1,0 +1,53 @@
+{
+  "task_id": "sphere_external_flow_001",
+  "geometry": {
+    "type": "sphere",
+    "unit": "m",
+    "parameters": {
+      "diameter": 0.1
+    }
+  },
+  "domain": {
+    "type": "external",
+    "upstream_length_ratio": 5.0,
+    "downstream_length_ratio": 15.0,
+    "side_length_ratio": 5.0
+  },
+  "fluid": {
+    "name": "air",
+    "density": 1.225,
+    "viscosity": 1.789e-5,
+    "temperature": 288.15,
+    "pressure": 101325.0
+  },
+  "motion": {
+    "type": "stationary",
+    "inlet_velocity": 30.0,
+    "attack_angle_deg": 0.0
+  },
+  "mesh": {
+    "boundary_layer_enabled": true,
+    "target_y_plus": 1.0,
+    "layers": 15,
+    "growth_rate": 1.2,
+    "max_skewness": 0.85,
+    "min_orthogonal_quality": 0.15
+  },
+  "solver": {
+    "steady": true,
+    "solver_type": "pressure_based",
+    "turbulence_model": "k_omega_sst",
+    "residual_target": 1e-5,
+    "max_iterations": 1000
+  },
+  "outputs": {
+    "requested": [
+      "drag_coefficient",
+      "pressure_contour",
+      "velocity_contour",
+      "residuals",
+      "report"
+    ]
+  }
+}
+

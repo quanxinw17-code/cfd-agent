@@ -1,0 +1,20 @@
+{
+  "points": 6869,
+  "tets": 33634,
+  "faces_total": 69607,
+  "interior_faces": 64929,
+  "boundary_faces": {
+    "velocity_inlet": 404,
+    "pressure_outlet": 404,
+    "farfield": 3080,
+    "object_wall": 790
+  },
+  "missing_boundary_faces": 0,
+  "zone_id_names": {
+    "3": "velocity_inlet",
+    "4": "pressure_outlet",
+    "5": "farfield",
+    "6": "object_wall"
+  },
+  "file": "outputs\\sphere_001\\meshing\\gmsh_volume_fluent_faces_flipped.msh"
+}

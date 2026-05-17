@@ -1,0 +1,17 @@
+# Python cache/test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local run outputs and solver scratch files
+outputs/
+FM_DESKTOP-*/
+fluent-*.trn
+fluent-*-error.log
+cleanup-fluent-*.bat
+
+# Local environment
+.env
+
+# Keep the curated successful validation case under version control.
+!validation_cases/

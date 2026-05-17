@@ -1,0 +1,45 @@
+/file/read-case "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/meshing/mesh_case.cas.h5"
+/define/models/viscous/kw-sst yes
+/define/boundary-conditions/zone-type wall-3 velocity-inlet
+/define/boundary-conditions/zone-type wall-4 pressure-outlet
+/define/boundary-conditions/zone-type wall-5 pressure-outlet
+/define/boundary-conditions/velocity-inlet velocity-inlet-3
+yes
+yes
+no
+30.0
+no
+0
+yes
+no
+1
+no
+0
+no
+0
+no
+no
+yes
+5
+10
+/define/boundary-conditions/modify-zones/list-zones
+/solve/initialize/hyb-initialization
+/solve/iterate 20
+/report/forces/wall-forces
+yes
+1
+0
+0
+no
+/report/forces/wall-forces
+yes
+0
+1
+0
+no
+/file/write-case "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/case.cas.h5"
+ok
+/file/write-data "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/data.dat.h5"
+ok
+/exit
+yes

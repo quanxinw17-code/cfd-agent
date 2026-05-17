@@ -1,0 +1,308 @@
+
+Opening input/output transcript to file "D:\Users\666\Documents\New project 2\cfd-agent\outputs\sphere_001\fluent\\fluent-20260517-152408-23896.trn".
+Auto-Transcript Start Time:  15:24:08, 17 May 2026 中国标准时间 
+
+              Welcome to ANSYS Fluent 2022 R1
+
+              Copyright 1987-2022 ANSYS, Inc. All Rights Reserved.
+              Unauthorized use, distribution or duplication is prohibited.
+              This product is subject to U.S. laws governing export and re-export.
+              For full Legal Notice, see documentation.
+
+Build Time: Nov 29 2021 12:14:46 EST  Build Id: 10213  
+ 
+Connected License Server List:	
+
+*********************************************
+Info: Your license enables 4-way parallel execution.
+For faster simulations, please start the application with the appropriate parallel options.
+*********************************************
+
+Host spawning Node 0 on machine "DESKTOP-IJGNU16" (win64).
+
+---------------------------------------------------------------------------------------
+ID    Hostname         Core  O.S.         PID    Vendor                               
+---------------------------------------------------------------------------------------
+n0    DESKTOP-IJGNU16  1/16  Windows-x64  2932   AMD Ryzen 7 5700X 8-Core Processor   
+host  DESKTOP-IJGNU16        Windows-x64  19976  AMD Ryzen 7 5700X 8-Core Processor   
+
+MPI Option Selected: intel
+---------------------------------------------------------------------------------------
+
+
+
+Cleanup script file is D:\Users\666\Documents\New project 2\cfd-agent\outputs\sphere_001\fluent\\cleanup-fluent-DESKTOP-IJGNU16-23896.bat
+
+Error: Journal file "outputs\sphere_001\fluent\fluent_solve.jou" not found.
+Error Object: #f
+
+> Halting due to end of file on input.
+Auto-Transcript Stop Time:  15:24:20, 17 May 2026 中国标准时间 
+Total Transcript Time: 0 Minute 12 Second.
+
+Automatic transcript closed.
+
+Opening input/output transcript to file "D:\Users\666\Documents\New project 2\cfd-agent\outputs\sphere_001\fluent\\fluent-20260517-152531-14040.trn".
+Auto-Transcript Start Time:  15:25:31, 17 May 2026 中国标准时间 
+
+              Welcome to ANSYS Fluent 2022 R1
+
+              Copyright 1987-2022 ANSYS, Inc. All Rights Reserved.
+              Unauthorized use, distribution or duplication is prohibited.
+              This product is subject to U.S. laws governing export and re-export.
+              For full Legal Notice, see documentation.
+
+Build Time: Nov 29 2021 12:14:46 EST  Build Id: 10213  
+ 
+Connected License Server List:	
+
+*********************************************
+Info: Your license enables 4-way parallel execution.
+For faster simulations, please start the application with the appropriate parallel options.
+*********************************************
+
+Host spawning Node 0 on machine "DESKTOP-IJGNU16" (win64).
+
+---------------------------------------------------------------------------------------
+ID    Hostname         Core  O.S.         PID    Vendor                               
+---------------------------------------------------------------------------------------
+n0    DESKTOP-IJGNU16  1/16  Windows-x64  24196  AMD Ryzen 7 5700X 8-Core Processor   
+host  DESKTOP-IJGNU16        Windows-x64  5172   AMD Ryzen 7 5700X 8-Core Processor   
+
+MPI Option Selected: intel
+---------------------------------------------------------------------------------------
+
+
+
+Cleanup script file is D:\Users\666\Documents\New project 2\cfd-agent\outputs\sphere_001\fluent\\cleanup-fluent-DESKTOP-IJGNU16-14040.bat
+
+Reading journal file D:\Users\666\Documents\New project 2\cfd-agent\outputs\sphere_001\fluent\fluent_solve.jou...
+
+> /file/read-case "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/meshing/mesh_case.cas.h5"Fast-loading "D:\PROGRA~1\ANSYSI~1\v221\fluent\fluent22.1.0\\addons\afd\lib\hdfio.bin"
+Done.
+
+DESKTOP-IJGNU16 has other FLUENT parallel processes running.                       Process affinity not being set.
+
+Reading from DESKTOP-IJGNU16:"D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/meshing/mesh_case.cas.h5" in NODE0 mode ...
+  Reading mesh ...
+       33634 cells,     1 cell zone  ...
+          33634 tetrahedral cells,  zone id: 7
+       69607 faces,     5 face zones ...
+            790 triangular wall faces,  zone id: 6
+           3080 triangular wall faces,  zone id: 5
+            404 triangular wall faces,  zone id: 4
+            404 triangular wall faces,  zone id: 3
+          64929 triangular interior faces,  zone id: 2
+        6869 nodes,     2 node zones ...
+
+Building...
+     mesh
+     materials,
+     interface,
+     domains,
+     zones,
+	wall-6
+	wall-5
+	wall-4
+	wall-3
+	interior-2
+	fluid-7
+     parallel,
+Done.
+
+
+> /define/models/viscous/kw-sst yes
+
+> /define/boundary-conditions/zone-type wall-3 velocity-inlet
+
+> /define/boundary-conditions/zone-type wall-4 pressure-outlet
+
+> /define/boundary-conditions/zone-type wall-5 pressure-outlet
+
+> /define/boundary-conditions/velocity-inlet (velocity-inlet-3)
+velocity-inlet-3
+Velocity Specification Method: Magnitude and Direction [no] yes
+Reference Frame: Absolute [yes] yes
+Use Profile for Velocity Magnitude? [no] no
+Velocity Magnitude (constant or expresssion) (in [m/s]) [0] 30.0
+Use Profile for Supersonic/Initial Gauge Pressure? [no] no
+Supersonic/Initial Gauge Pressure (constant or expresssion) (in [Pa]) [0] 0
+Coordinate System: Cartesian (X, Y, Z) [yes] yes
+Use Profile for X-Component of Flow Direction? [no] no
+X-Component of Flow Direction (constant or expresssion) [1] 1
+Use Profile for Y-Component of Flow Direction? [no] no
+Y-Component of Flow Direction (constant or expresssion) [0] 0
+Use Profile for Z-Component of Flow Direction? [no] no
+Z-Component of Flow Direction (constant or expresssion) [0] 0
+Turbulent Specification Method: K and Omega [no] no
+Turbulent Specification Method: Intensity and Length Scale [no] no
+Turbulent Specification Method: Intensity and Viscosity Ratio [yes] yes
+Turbulent Intensity (constant or expresssion) (in [%]) [5] 5
+Turbulent Viscosity Ratio (constant or expresssion) [10] 10
+
+> /define/boundary-conditions/modify-zones/list-zones
+  id  name                       type                material              kind
+----  -------------------------  ------------------  --------------------  ----
+   7  fluid-7                    fluid               air                   cell
+   5  pressure-outlet-5          pressure-outlet                           face
+   4  pressure-outlet-4          pressure-outlet                           face
+   3  velocity-inlet-3           velocity-inlet                            face
+   2  interior-2                 interior                                  face
+   6  wall-6                     wall                air                   face
+
+> /solve/initialize/hyb-initialization
+
+Initialize using the hybrid initialization method.
+
+Checking case topology... 
+-This case has both inlets & outlets 
+-Pressure information is not available at the boundaries.
+ Case will be initialized with constant pressure
+
+	iter		scalar-0
+
+	1		1.000000e+00
+	2		1.734741e-02
+	3		3.114914e-03
+	4		1.064172e-03
+	5		2.877250e-04
+	6		1.060148e-04
+	7		3.473547e-05
+	8		1.331542e-05
+	9		4.707043e-06
+	10		1.902936e-06
+
+Hybrid initialization is done.
+
+Warning: convergence tolerance of 1.000000e-06 not reached
+during Hybrid Initialization.
+
+> /solve/iterate 20
+
+  iter  continuity  x-velocity  y-velocity  z-velocity           k       omega     time/iter
+     1  1.0000e+00  6.8070e-02  6.1975e-02  6.5221e-02  7.2362e-01  3.7834e-01  0:00:00   19
+
+ Reversed flow on 1 face (0.2% area) of pressure-outlet 4.
+     2  7.0357e-01  5.6816e-02  3.6150e-02  3.7360e-02  6.0860e-01  3.5588e-01  0:00:00   18
+     3  5.3615e-01  4.5286e-02  2.1993e-02  2.2606e-02  3.6022e-01  3.1421e-01  0:00:00   17
+
+ Reversed flow on 22 faces (0.6% area) of pressure-outlet 5.
+     4  4.6862e-01  3.8515e-02  1.5739e-02  1.6128e-02  1.2696e-01  2.5060e-01  0:00:00   16
+
+ Reversed flow on 40 faces (1.1% area) of pressure-outlet 5.
+     5  4.1517e-01  3.1829e-02  1.2349e-02  1.2643e-02  5.9173e-02  1.7151e-01  0:00:00   15
+
+ Reversed flow on 29 faces (0.8% area) of pressure-outlet 5.
+     6  3.6908e-01  2.5986e-02  9.8404e-03  1.0232e-02  4.7730e-02  1.0297e-01  0:00:00   14
+
+ Reversed flow on 50 faces (1.4% area) of pressure-outlet 5.
+     7  3.5185e-01  2.2448e-02  8.2311e-03  8.4360e-03  4.0930e-02  5.7695e-02  0:00:00   13
+
+ Reversed flow on 54 faces (1.5% area) of pressure-outlet 5.
+     8  3.3791e-01  1.9823e-02  6.9176e-03  7.2433e-03  3.7528e-02  3.3523e-02  0:00:00   12
+
+ Reversed flow on 61 faces (1.7% area) of pressure-outlet 5.
+     9  3.2455e-01  1.7516e-02  6.1787e-03  6.2837e-03  3.5437e-02  2.1466e-02  0:00:00   11
+
+ Reversed flow on 63 faces (1.8% area) of pressure-outlet 5.
+    10  3.0739e-01  1.5626e-02  5.5189e-03  5.6570e-03  3.3903e-02  1.5464e-02  0:00:00   10
+
+ Reversed flow on 77 faces (2.1% area) of pressure-outlet 5.
+    11  3.0231e-01  1.4083e-02  5.0139e-03  5.1856e-03  3.2567e-02  1.1981e-02  0:00:09    9
+
+ Reversed flow on 70 faces (2.0% area) of pressure-outlet 5.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity           k       omega     time/iter
+    12  2.9448e-01  1.2855e-02  4.6250e-03  4.6902e-03  3.2313e-02  1.0849e-02  0:00:06    8
+
+ Reversed flow on 100 faces (2.8% area) of pressure-outlet 5.
+    13  3.0435e-01  1.1840e-02  4.2891e-03  4.4568e-03  3.4673e-02  1.0496e-02  0:00:04    7
+
+ Reversed flow on 103 faces (3.0% area) of pressure-outlet 5.
+    14  3.1339e-01  1.0974e-02  4.0400e-03  4.1534e-03  3.4936e-02  1.0065e-02  0:00:03    6
+
+ Reversed flow on 102 faces (2.9% area) of pressure-outlet 5.
+    15  3.1601e-01  1.0197e-02  3.8030e-03  3.8548e-03  3.6826e-02  1.0592e-02  0:00:02    5
+
+ Reversed flow on 131 faces (3.8% area) of pressure-outlet 5.
+    16  3.2852e-01  9.6025e-03  3.6552e-03  3.8285e-03  3.7721e-02  1.0678e-02  0:00:01    4
+
+ Reversed flow on 119 faces (3.5% area) of pressure-outlet 5.
+    17  3.3412e-01  8.9993e-03  3.4685e-03  3.5426e-03  4.1126e-02  1.1962e-02  0:00:01    3
+
+ Reversed flow on 170 faces (5.1% area) of pressure-outlet 5.
+    18  3.7276e-01  8.6387e-03  3.5196e-03  3.4630e-03  4.3238e-02  1.2929e-02  0:00:00    2
+
+ Reversed flow on 188 faces (5.6% area) of pressure-outlet 5.
+    19  4.0506e-01  8.2341e-03  3.4151e-03  3.5303e-03  4.6776e-02  1.4006e-02  0:00:00    1
+
+ Reversed flow on 214 faces (6.4% area) of pressure-outlet 5.
+    20  4.3419e-01  7.8577e-03  3.4069e-03  3.5299e-03  5.5791e-02  1.6542e-02  0:00:00    0
+
+> /report/forces/wall-forces
+all wall zones [yes] yes
+x-component of force vector [1] 1
+y-component of force vector [0] 0
+z-component of force vector [0] 0
+Write to File? [no] no
+
+Forces
+                          Forces [N]                                                                                                                                Coefficients                                                                                                                             
+Zone                      Pressure                                      Viscous                                       Total                                         Pressure                                      Viscous                                       Total                                        
+wall-6                    (0.9514468 0.014162145 -0.068833286)          (0.023705434 -0.00012412605 0.00014362703)    (0.97515223 0.014038019 -0.068689659)         (1.5533825 0.02312187 -0.11238087)            (0.03870275 -0.00020265477 0.00023449311)     (1.5920853 0.022919215 -0.11214638)          
+------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- ---------------------------------------------
+Net                       (0.9514468 0.014162145 -0.068833286)          (0.023705434 -0.00012412605 0.00014362703)    (0.97515223 0.014038019 -0.068689659)         (1.5533825 0.02312187 -0.11238087)            (0.03870275 -0.00020265477 0.00023449311)     (1.5920853 0.022919215 -0.11214638)          
+
+Forces - Direction Vector (1 0 0)
+                          Forces [N]                                      Coefficients                                   
+Zone                      Pressure        Viscous         Total           Pressure        Viscous         Total          
+wall-6                    0.9514468       0.023705434     0.97515223      1.5533825       0.03870275      1.5920853      
+------------------------- --------------- --------------- --------------- --------------- --------------- ---------------
+Net                       0.9514468       0.023705434     0.97515223      1.5533825       0.03870275      1.5920853      
+
+> /report/forces/wall-forces
+all wall zones [yes] yes
+x-component of force vector [1] 0
+y-component of force vector [0] 1
+z-component of force vector [0] 0
+Write to File? [no] no
+
+Forces
+                          Forces [N]                                                                                                                                Coefficients                                                                                                                             
+Zone                      Pressure                                      Viscous                                       Total                                         Pressure                                      Viscous                                       Total                                        
+wall-6                    (0.9514468 0.014162145 -0.068833286)          (0.023705434 -0.00012412605 0.00014362703)    (0.97515223 0.014038019 -0.068689659)         (1.5533825 0.02312187 -0.11238087)            (0.03870275 -0.00020265477 0.00023449311)     (1.5920853 0.022919215 -0.11214638)          
+------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- --------------------------------------------- ---------------------------------------------
+Net                       (0.9514468 0.014162145 -0.068833286)          (0.023705434 -0.00012412605 0.00014362703)    (0.97515223 0.014038019 -0.068689659)         (1.5533825 0.02312187 -0.11238087)            (0.03870275 -0.00020265477 0.00023449311)     (1.5920853 0.022919215 -0.11214638)          
+
+Forces - Direction Vector (0 1 0)
+                          Forces [N]                                      Coefficients                                   
+Zone                      Pressure        Viscous         Total           Pressure        Viscous         Total          
+wall-6                    0.014162145     -0.00012412605  0.014038019     0.02312187      -0.00020265477  0.022919215    
+------------------------- --------------- --------------- --------------- --------------- --------------- ---------------
+Net                       0.014162145     -0.00012412605  0.014038019     0.02312187      -0.00020265477  0.022919215    
+
+> /file/write-case "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/case.cas.h5"
+The file "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/case.cas.h5" already exists.
+OK to overwrite? [cancel] ok
+
+Writing to DESKTOP-IJGNU16:"D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/case.cas.h5" in NODE0 mode and compression level 1 ...
+  Done.  Writing mesh ...
+       33634 cells,     1 zone  ...
+       69607 faces,     5 zones ...
+        6869 nodes,     1 zone  ...
+  Done.
+Done.
+
+> /file/write-data "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/data.dat.h5"
+The file "D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/data.dat.h5" already exists.
+OK to overwrite? [cancel] ok
+
+Writing to DESKTOP-IJGNU16:"D:/Users/666/Documents/New project 2/cfd-agent/outputs/sphere_001/fluent/data.dat.h5" in NODE0 mode and compression level 1 ...
+  Writing results.
+Done.
+
+> /exit
+Auto-Transcript Stop Time:  15:25:50, 17 May 2026 中国标准时间 
+Total Transcript Time: 0 Minute 19 Second.
+
+Automatic transcript closed.

@@ -1,0 +1,5 @@
+use_pyfluent: false
+fluent_executable_env: FLUENT_EXECUTABLE
+solver_enabled_env: FLUENT_SOLVER_ENABLED
+meshing_enabled_env: FLUENT_MESHING_ENABLED
+dimension: 3ddp

@@ -1,0 +1,28 @@
+; CFD Agent Fluent setup journal
+; Step 1: read mesh
+/file/read-mesh "{{ mesh_file }}"
+
+; Step 2: check mesh
+/mesh/check
+
+; Step 3: pressure-based steady solver
+/define/models/solver/pressure-based yes
+/define/models/viscous kw-sst yes
+
+; Step 4: material properties
+/define/materials/change-create air air yes constant {{ density }} constant {{ viscosity }}
+
+; Step 5: boundary conditions
+/define/boundary-conditions/velocity-inlet velocity_inlet yes no {{ velocity }}
+/define/boundary-conditions/pressure-outlet pressure_outlet yes 0
+
+; Step 6: residual criteria
+/solve/monitors/residual/convergence-criteria {{ residual_target }} {{ residual_target }} {{ residual_target }} {{ residual_target }} {{ residual_target }} {{ residual_target }}
+
+; Step 7: initialize
+/solve/initialize/hyb-initialization
+
+; Step 8: save initial case
+/file/write-case "{{ case_file }}"
+yes
+

@@ -1,0 +1,12 @@
+{
+  "geometry_type": "sphere",
+  "unit": "m",
+  "parameters": {
+    "diameter": 0.1
+  },
+  "characteristic_length": 0.1,
+  "reference_area": 0.007853981633974483,
+  "reference_volume": 0.0005235987755982989,
+  "dry_run": false,
+  "note": "CAD files are only real when SolidWorks successfully exports them."
+}

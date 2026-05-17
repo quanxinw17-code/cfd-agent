@@ -1,0 +1,17 @@
+{
+  "task_id": "cylinder_external_flow_001",
+  "geometry": {
+    "type": "cylinder",
+    "unit": "m",
+    "parameters": {
+      "diameter": 0.05,
+      "length": 0.2
+    }
+  },
+  "motion": {
+    "type": "stationary",
+    "inlet_velocity": 20.0,
+    "attack_angle_deg": 0.0
+  }
+}
+

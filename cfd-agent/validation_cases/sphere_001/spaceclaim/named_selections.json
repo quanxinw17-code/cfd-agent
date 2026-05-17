@@ -1,0 +1,18 @@
+{
+  "velocity_inlet": {
+    "type": "velocity-inlet"
+  },
+  "pressure_outlet": {
+    "type": "pressure-outlet"
+  },
+  "farfield": {
+    "type": "wall"
+  },
+  "object_wall": {
+    "type": "wall"
+  },
+  "symmetry": {
+    "type": "symmetry",
+    "optional": true
+  }
+}

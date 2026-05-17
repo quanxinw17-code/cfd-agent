@@ -1,0 +1,3 @@
+iteration,quantity,direction_x,direction_y,direction_z,pressure_N,viscous_N,total_N,pressure_coefficient,viscous_coefficient,total_coefficient,zone
+20,drag_x,1,0,0,0.9514468,0.023705434,0.97515223,1.5533825,0.03870275,1.5920853,wall-6
+20,lift_y,0,1,0,0.014162145,-0.00012412605,0.014038019,0.02312187,-0.00020265477,0.022919215,wall-6

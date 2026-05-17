@@ -1,0 +1,12 @@
+workflow:
+  route:
+    - SimulationTask
+    - SolidWorks target model
+    - SpaceClaim external fluid domain
+    - Fluent Meshing watertight workflow
+    - Fluent Solver
+    - postprocess
+    - report
+default_fluid: air
+default_solver: pressure_based
+dry_run_safe: true
