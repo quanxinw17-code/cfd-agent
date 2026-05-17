@@ -50,7 +50,7 @@ The web UI can run the full chain or a segmented range such as `solidworks -> me
 The validated sphere case is stored at:
 
 ```text
-validation_cases/sphere_001/
+validated_cases/sphere_001/
 ```
 
 It contains the input JSON, generated CAD/domain handoff files, mesh/case/data files, residual and force CSVs, and final report.

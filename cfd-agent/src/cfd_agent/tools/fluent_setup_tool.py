@@ -5,7 +5,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from cfd_agent.core.models import SimulationTask
-from cfd_agent.tools.file_tool import ensure_dir
+from cfd_agent.tools.file_tool import ensure_dir, template_dir
 
 
 def create_fluent_journal(task: SimulationTask, mesh_info: dict, output_dir: str) -> dict:
@@ -26,8 +26,7 @@ def create_fluent_journal(task: SimulationTask, mesh_info: dict, output_dir: str
     }
     setup_path = output / "fluent_setup.jou"
     solve_path = output / "fluent_solve.jou"
-    template_dir = Path(__file__).resolve().parents[1] / "templates"
-    env = Environment(loader=FileSystemLoader(template_dir), autoescape=False)
+    env = Environment(loader=FileSystemLoader(template_dir()), autoescape=False)
     setup_path.write_text(env.get_template("fluent_setup.jou.j2").render(**context), encoding="utf-8")
     solve_path.write_text(_solver_journal(context), encoding="utf-8")
     return {"success": True, "setup_journal": str(setup_path), "solve_journal": str(solve_path), "error": None}

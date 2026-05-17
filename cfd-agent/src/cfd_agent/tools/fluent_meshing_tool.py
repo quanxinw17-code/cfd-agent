@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from cfd_agent.core.logging_config import configure_task_logger
 from cfd_agent.core.models import SimulationTask
-from cfd_agent.tools.file_tool import ensure_dir, write_json
+from cfd_agent.tools.file_tool import ensure_dir, template_dir, write_json
 
 
 def generate_mesh_with_fluent_meshing(task: SimulationTask, domain_info: dict, output_dir: str, dry_run: bool = False) -> dict:
@@ -112,8 +112,7 @@ def _load_quality_report(path: Path, default: dict) -> dict:
 
 
 def _render_template(template_name: str, target: Path, context: dict) -> None:
-    template_dir = Path(__file__).resolve().parents[1] / "templates"
-    env = Environment(loader=FileSystemLoader(template_dir), autoescape=False)
+    env = Environment(loader=FileSystemLoader(template_dir()), autoescape=False)
     target.write_text(env.get_template(template_name).render(**context), encoding="utf-8")
 
 

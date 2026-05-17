@@ -17,7 +17,7 @@ from cfd_agent.core.orchestrator import run_simulation
 
 
 ROOT = Path.cwd().resolve()
-DEFAULT_INPUT = "src/cfd_agent/examples/sphere_external_flow.json"
+DEFAULT_INPUT = "examples/sphere_external_flow.json"
 DEFAULT_OUTPUT = "outputs/sphere_001"
 STAGES = ["validate", "solidworks", "spaceclaim", "meshing", "fluent_setup", "solver", "postprocess", "report"]
 

@@ -13,5 +13,5 @@ cleanup-fluent-*.bat
 # Local environment
 .env
 
-# Keep the curated successful validation case under version control.
-!validation_cases/
+# Keep curated successful validation cases under version control.
+!validated_cases/

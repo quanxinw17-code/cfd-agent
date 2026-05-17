@@ -42,7 +42,7 @@ Dry run:
 
 ```powershell
 $env:PYTHONPATH = "src"
-py -m cfd_agent.main run --input src\cfd_agent\examples\sphere_external_flow.json --output outputs\sphere_001 --dry-run
+py -m cfd_agent.main run --input examples\sphere_external_flow.json --output outputs\sphere_001 --dry-run
 ```
 
 Real run on the validated machine:
@@ -56,15 +56,15 @@ $env:FLUENT_EXECUTABLE = "D:\Program Files\ANSYS Inc\v221\fluent\ntbin\win64\flu
 $env:FLUENT_SOLVER_ENABLED = "true"
 $env:CFD_AGENT_GMSH_FALLBACK = "true"
 
-py -m cfd_agent.main run --input src\cfd_agent\examples\sphere_external_flow.json --output outputs\sphere_001 --json
+py -m cfd_agent.main run --input examples\sphere_external_flow.json --output outputs\sphere_001 --json
 ```
 
 Segmented run:
 
 ```powershell
-py -m cfd_agent.main run --input src\cfd_agent\examples\sphere_external_flow.json --output outputs\sphere_001 --to-stage solidworks
-py -m cfd_agent.main run --input src\cfd_agent\examples\sphere_external_flow.json --output outputs\sphere_001 --from-stage spaceclaim --to-stage meshing
-py -m cfd_agent.main run --input src\cfd_agent\examples\sphere_external_flow.json --output outputs\sphere_001 --from-stage fluent_setup
+py -m cfd_agent.main run --input examples\sphere_external_flow.json --output outputs\sphere_001 --to-stage solidworks
+py -m cfd_agent.main run --input examples\sphere_external_flow.json --output outputs\sphere_001 --from-stage spaceclaim --to-stage meshing
+py -m cfd_agent.main run --input examples\sphere_external_flow.json --output outputs\sphere_001 --from-stage fluent_setup
 ```
 
 Supported stages:
@@ -78,7 +78,7 @@ validate, solidworks, spaceclaim, meshing, fluent_setup, solver, postprocess, re
 A successful real-run case is preserved in:
 
 ```text
-validation_cases/sphere_001/
+validated_cases/sphere_001/
 ```
 
 It includes:
@@ -115,10 +115,20 @@ $env:PYTHONPATH = "src"
 py -m pytest -q
 ```
 
-Project layout is documented in:
+## Project Layout
 
 ```text
-docs/PROJECT_LAYOUT.md
+cfd-agent/
+  README.md
+  ENVIRONMENT.md
+  requirements.txt
+  .env.example
+  prompts/
+  configs/
+  src/
+  templates/
+  examples/
+  validated_cases/
 ```
 
 Machine setup and environment variables are documented in:
