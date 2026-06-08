@@ -36,8 +36,8 @@ STAGE_LABELS = {
     "postprocess": "7. 后处理",
     "report": "8. 生成报告",
 }
-STAGE_LABELS["mesh_imitation"] = "4. Reference mesh imitation"
-STAGE_LABELS["domain_imitation"] = "3. External domain imitation"
+STAGE_LABELS["mesh_imitation"] = "4. 参考网格模仿"
+STAGE_LABELS["domain_imitation"] = "3. 外流场模仿"
 STAGE_BUTTONS = "".join(
     f'<div class="stage-item" data-stage="{stage}"><span class="stage-state">待运行</span><strong>{STAGE_LABELS[stage]}</strong>'
     f'<button class="stage-run run-action" onclick="runStage(\'{stage}\')">运行此步</button></div>'
@@ -364,7 +364,7 @@ def _browse_path(kind: str) -> str:
             )
         elif kind == "mesh":
             selected = filedialog.askopenfilename(
-                title="Select Fluent reference mesh or case",
+                title="选择 Fluent 参考网格或 case",
                 filetypes=[
                     ("Fluent mesh or case", "*.msh *.msh.h5 *.cas *.cas.h5"),
                     ("All files", "*.*"),
@@ -373,7 +373,7 @@ def _browse_path(kind: str) -> str:
             )
         elif kind == "domain":
             selected = filedialog.askopenfilename(
-                title="Select SpaceClaim reference fluid domain",
+                title="选择 SpaceClaim 参考流体域",
                 filetypes=[
                     ("SpaceClaim or STEP domain", "*.scdoc *.step *.stp"),
                     ("SpaceClaim", "*.scdoc"),
@@ -453,7 +453,7 @@ def _content_type(path: Path) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="CFD Agent local web entry")
+    parser = argparse.ArgumentParser(description="CFD Agent 本地网页入口")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--no-browser", action="store_true")
@@ -462,7 +462,7 @@ def main(argv: list[str] | None = None) -> int:
     url = f"http://{args.host}:{args.port}/"
     if not args.no_browser:
         threading.Timer(0.7, lambda: webbrowser.open(url)).start()
-    print(f"CFD Agent web entry: {url}")
+    print(f"CFD Agent 网页入口: {url}")
     server.serve_forever()
     return 0
 
@@ -572,17 +572,17 @@ INDEX_HTML = f"""<!doctype html>
         <input id="output" value="{DEFAULT_OUTPUT}">
         <button class="browse-btn" title="选择输出文件夹" onclick="browsePath('directory', 'output', this)">&#128193;</button>
       </div>
-      <label class="check"><input id="oneClickDeployEnabled" type="checkbox"> One-click deployment mode</label>
+      <label class="check"><input id="oneClickDeployEnabled" type="checkbox"> 一键部署模式</label>
       <div id="deployPanel">
         <label>SpaceClaim executable</label>
         <input id="deploySpaceClaimExecutable" placeholder="D:/Program Files/ANSYS Inc/v221/scdm/SpaceClaim.exe">
         <label>Fluent executable</label>
         <input id="deployFluentExecutable" placeholder="D:/Program Files/ANSYS Inc/v221/fluent/ntbin/win64/fluent.exe">
-        <label class="check"><input id="deployForeground" type="checkbox" checked> Run commercial software in foreground</label>
-        <label class="check"><input id="deploySolidWorksEnabled" type="checkbox" checked> Enable SolidWorks</label>
-        <label class="check"><input id="deploySpaceClaimEnabled" type="checkbox" checked> Enable SpaceClaim</label>
-        <label class="check"><input id="deployFluentMeshingEnabled" type="checkbox" checked> Enable Fluent Meshing</label>
-        <label class="check"><input id="deployFluentSolverEnabled" type="checkbox" checked> Enable Fluent Solver</label>
+        <label class="check"><input id="deployForeground" type="checkbox" checked> 商业软件前台运行</label>
+        <label class="check"><input id="deploySolidWorksEnabled" type="checkbox" checked> 启用 SolidWorks</label>
+        <label class="check"><input id="deploySpaceClaimEnabled" type="checkbox" checked> 启用 SpaceClaim</label>
+        <label class="check"><input id="deployFluentMeshingEnabled" type="checkbox" checked> 启用 Fluent Meshing</label>
+        <label class="check"><input id="deployFluentSolverEnabled" type="checkbox" checked> 启用 Fluent Solver</label>
         <div class="row">
           <button class="secondary" onclick="runDeploymentCheck()">检测环境</button>
           <button class="secondary" onclick="saveDeploymentConfig()">保存配置</button>
@@ -597,22 +597,22 @@ INDEX_HTML = f"""<!doctype html>
       </div>
       <label>CAD 特征长度（米）</label>
       <input id="characteristicLength" type="number" min="0" step="any" placeholder="例如 0.1">
-      <label class="check"><input id="domainImitationEnabled" type="checkbox"> External domain imitation</label>
-      <label>SpaceClaim reference fluid domain</label>
+      <label class="check"><input id="domainImitationEnabled" type="checkbox"> 外流场模仿</label>
+      <label>SpaceClaim 参考流体域</label>
       <div class="path-row">
         <input id="referenceDomainFile" placeholder="D:/reference/fluid_domain.scdoc">
-        <button class="browse-btn" title="Select SpaceClaim reference fluid domain" onclick="browsePath('domain', 'referenceDomainFile', this)">&#128194;</button>
+        <button class="browse-btn" title="选择 SpaceClaim 参考流体域" onclick="browsePath('domain', 'referenceDomainFile', this)">&#128194;</button>
       </div>
-      <label>Manual flow direction (optional)</label>
-      <input id="manualFlowDirection" placeholder="Auto-detect, or enter 1,0,0">
-      <label class="check"><input id="meshImitationEnabled" type="checkbox"> Reference mesh imitation</label>
-      <label>Fluent reference mesh / case</label>
+      <label>手动流向（可选）</label>
+      <input id="manualFlowDirection" placeholder="自动识别，或输入 1,0,0">
+      <label class="check"><input id="meshImitationEnabled" type="checkbox"> 参考网格模仿</label>
+      <label>Fluent 参考网格 / case</label>
       <div class="path-row">
         <input id="referenceMeshFile" placeholder="D:/reference/reference.msh.h5">
-        <button class="browse-btn" title="Select Fluent reference mesh" onclick="browsePath('mesh', 'referenceMeshFile', this)">&#128194;</button>
+        <button class="browse-btn" title="选择 Fluent 参考网格" onclick="browsePath('mesh', 'referenceMeshFile', this)">&#128194;</button>
       </div>
-      <label>Reference characteristic length (m, optional fallback)</label>
-      <input id="referenceCharacteristicLength" type="number" min="0" step="any" placeholder="Auto-detect from object_wall">
+      <label>参考特征长度（米，可选兜底）</label>
+      <input id="referenceCharacteristicLength" type="number" min="0" step="any" placeholder="自动从 object_wall 识别">
       <div class="row">
         <div><label>从阶段</label><select id="fromStage"><option value="">从头开始</option>{''.join(f'<option value="{s}">{s}</option>' for s in STAGES)}</select></div>
         <div><label>到阶段</label><select id="toStage"><option value="">跑到最后</option>{''.join(f'<option value="{s}">{s}</option>' for s in STAGES)}</select></div>
