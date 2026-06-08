@@ -36,6 +36,28 @@ http://127.0.0.1:8765/
 
 The web page can run the full workflow or a segmented range such as `solidworks -> meshing` or `fluent_setup -> report`.
 
+## GitHub Pages Entry
+
+The repository includes a first-version static website under `docs/`.
+After pushing to GitHub, enable Pages with:
+
+```text
+Settings -> Pages -> Deploy from a branch -> /docs
+```
+
+The public entry will be:
+
+```text
+https://quanxinw17-code.github.io/cfd-agent/
+```
+
+GitHub Pages is only a download and startup guide. The Agent itself still runs
+locally at:
+
+```text
+http://127.0.0.1:8765/
+```
+
 The primary web input is a natural-language task description. Example:
 
 ```text

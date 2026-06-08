@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CFD Agent | SolidWorks + SpaceClaim + Fluent 自动化入口</title>
+  <meta name="description" content="CFD Agent 是一个本地运行的 CFD 自动化 Agent，支持 SolidWorks 建模、SpaceClaim 外流场生成、Fluent Meshing 网格和 Fluent Solver 求解。">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6b78;
+      --line: #d7dee6;
+      --panel: #ffffff;
+      --bg: #f4f7fa;
+      --blue: #145fbf;
+      --green: #0d7d67;
+      --amber: #b15c00;
+      --dark: #101820;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .hero {
+      min-height: 82vh;
+      display: grid;
+      align-items: end;
+      background:
+        linear-gradient(180deg, rgba(10, 19, 31, 0.35), rgba(10, 19, 31, 0.88)),
+        url("assets/agent-preview.png");
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+    }
+
+    .hero-inner,
+    .section-inner {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero-inner {
+      padding: 64px 0 56px;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      font-size: 14px;
+      letter-spacing: 0;
+      color: #b7d7ff;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(34px, 6vw, 68px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 760px;
+      margin: 22px 0 0;
+      font-size: 18px;
+      color: #e8eef5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .button.primary {
+      background: #ffffff;
+      color: #0f386d;
+      border-color: #ffffff;
+    }
+
+    .button:hover {
+      text-decoration: none;
+      filter: brightness(0.98);
+    }
+
+    .status-strip {
+      background: var(--dark);
+      color: #eef4fa;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .status-item {
+      padding: 18px;
+      background: var(--dark);
+    }
+
+    .status-item strong {
+      display: block;
+      font-size: 15px;
+      color: #fff;
+    }
+
+    .status-item span {
+      color: #b8c5d2;
+      font-size: 13px;
+    }
+
+    section {
+      padding: 54px 0;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .tile {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .tile h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .tile p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 12px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .steps li {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .steps strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    .command {
+      margin: 14px 0 0;
+      overflow-x: auto;
+      border: 1px solid #c8d3df;
+      border-radius: 8px;
+      background: #101820;
+      color: #eaf2f8;
+      padding: 14px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .download-band {
+      background: #ffffff;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .note {
+      border-left: 4px solid var(--amber);
+      background: #fff8ee;
+      padding: 14px 16px;
+      color: #54330b;
+      margin-top: 20px;
+    }
+
+    footer {
+      padding: 28px 0;
+      background: #101820;
+      color: #c3ccd5;
+      font-size: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .hero {
+        min-height: 78vh;
+      }
+
+      .grid,
+      .two-col,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner,
+      .section-inner {
+        width: min(100% - 28px, 1120px);
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Windows 本地 CFD 自动化 Agent</p>
+      <h1>CFD Agent</h1>
+      <p class="lead">
+        用一个本地网页入口串联 SolidWorks、SpaceClaim、Fluent Meshing 和 Fluent Solver，
+        支持自然语言任务、分段运行、全流程自动、案例管理、错误诊断和验证案例复用。
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/quanxinw17-code/cfd-agent/releases/latest">下载发布包</a>
+        <a class="button" href="https://github.com/quanxinw17-code/cfd-agent">打开 GitHub 仓库</a>
+        <a class="button" href="#start">查看启动步骤</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="status-strip">
+    <div class="section-inner status-grid">
+      <div class="status-item">
+        <strong>本地运行</strong>
+        <span>GitHub Pages 只做入口页，Agent 在你的 Windows 工作站运行。</span>
+      </div>
+      <div class="status-item">
+        <strong>已验证案例</strong>
+        <span>包含 sphere_001 验证案例和完整输出结构。</span>
+      </div>
+      <div class="status-item">
+        <strong>分段串联</strong>
+        <span>支持从任意阶段恢复：CAD、流体域、网格、求解、报告。</span>
+      </div>
+      <div class="status-item">
+        <strong>前台运行</strong>
+        <span>SolidWorks、SpaceClaim、Fluent 可按要求在前台启动。</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section>
+      <div class="section-inner">
+        <h2>Agent 能做什么</h2>
+        <p class="muted">第一版网站作为安装与启动入口，实际计算仍在本地软件环境中完成。</p>
+        <div class="grid">
+          <div class="tile">
+            <h3>自然语言任务</h3>
+            <p>输入“直径 0.1 m 球体外流场，入口 30 m/s”这类描述，Agent 会解析成结构化任务。</p>
+          </div>
+          <div class="tile">
+            <h3>CAD 与流体域</h3>
+            <p>生成 SolidWorks 模型，或导入自定义 CAD，再通过 SpaceClaim 创建外流场流体域。</p>
+          </div>
+          <div class="tile">
+            <h3>Fluent 网格与求解</h3>
+            <p>执行 Fluent Meshing Watertight Workflow，生成体网格，再进入 Fluent Solver 保存 case/data。</p>
+          </div>
+          <div class="tile">
+            <h3>参数化编辑器</h3>
+            <p>几何、流体、外流场、网格、求解参数可以一步一步设置，也可以保存成案例 JSON。</p>
+          </div>
+          <div class="tile">
+            <h3>错误诊断中心</h3>
+            <p>读取日志、质量报告和 pipeline state，定位缺边界、网格质量、输出文件缺失等问题。</p>
+          </div>
+          <div class="tile">
+            <h3>部署检查</h3>
+            <p>检查 Python、依赖包、SolidWorks、SpaceClaim、Fluent 路径，并运行软件 smoke check。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="start" class="download-band">
+      <div class="section-inner two-col">
+        <div>
+          <h2>启动本地 Agent</h2>
+          <ol class="steps">
+            <li>
+              <div>
+                <strong>下载仓库或发布包</strong>
+                <span>从 GitHub Releases 下载 zip，或者 clone 仓库到本地 Windows 工作站。</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>安装 Python 依赖</strong>
+                <span>在项目目录执行依赖安装命令。</span>
+                <pre class="command"><code>py -m pip install -r requirements.txt</code></pre>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>配置软件路径</strong>
+                <span>复制 <code>.env.example</code> 为 <code>.env</code>，填写 SolidWorks、SpaceClaim、Fluent 路径。</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>启动网页入口</strong>
+                <span>运行批处理文件，浏览器打开本地 Agent。</span>
+                <pre class="command"><code>.\CFD_Agent_Web.bat
+http://127.0.0.1:8765/</code></pre>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <h2>GitHub Pages 设置</h2>
+          <p class="muted">
+            根据 GitHub Pages 官方说明，发布源可以选择仓库根目录或 <code>/docs</code> 文件夹。
+            本项目第一版网站已经放在 <code>docs/index.html</code>。
+          </p>
+          <ol class="steps">
+            <li>
+              <div>
+                <strong>进入仓库 Settings</strong>
+                <span>打开 GitHub 仓库，进入 <code>Settings -> Pages</code>。</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>选择发布源</strong>
+                <span>选择当前分支，文件夹选择 <code>/docs</code>。</span>
+              </div>
+            </li>
+            <li>
+              <div>
+                <strong>保存并等待构建</strong>
+                <span>构建完成后访问 <code>https://quanxinw17-code.github.io/cfd-agent/</code>。</span>
+              </div>
+            </li>
+          </ol>
+          <div class="note">
+            GitHub Pages 不能直接启动你电脑上的 SolidWorks、SpaceClaim 或 Fluent；它负责展示入口和下载说明，本地 Agent 负责真正运行软件。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-inner">
+        <h2>推荐发布内容</h2>
+        <div class="grid">
+          <div class="tile">
+            <h3>源码 zip</h3>
+            <p>包含 README、ENVIRONMENT、src、templates、scripts、tests、examples 和 validated_cases。</p>
+          </div>
+          <div class="tile">
+            <h3>Git bundle</h3>
+            <p>网络不稳定时可用 bundle 在另一台电脑恢复完整 Git 历史。</p>
+          </div>
+          <div class="tile">
+            <h3>验证案例</h3>
+            <p>保留 sphere_001 的 CAD、流体域、网格、求解和报告，用于验收部署结果。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="section-inner">
+      CFD Agent · GitHub Pages 入口页 · 本地地址：<code>http://127.0.0.1:8765/</code>
+    </div>
+  </footer>
+</body>
+</html>
