@@ -42,10 +42,8 @@ def _solver_journal(context: dict) -> str:
     iterations = min(int(context["max_iterations"]), 20)
     return f"""/file/read-case "{context["mesh_case"]}"
 /define/models/viscous/kw-sst yes
-/define/boundary-conditions/zone-type wall-3 velocity-inlet
-/define/boundary-conditions/zone-type wall-4 pressure-outlet
-/define/boundary-conditions/zone-type wall-5 pressure-outlet
-/define/boundary-conditions/velocity-inlet velocity-inlet-3
+/define/boundary-conditions/zone-type farfield symmetry
+/define/boundary-conditions/velocity-inlet velocity_inlet
 yes
 yes
 no

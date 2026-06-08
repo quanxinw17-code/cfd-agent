@@ -1,0 +1,56 @@
+{
+  "task_id": "a350_10km_external_flow",
+  "geometry": {
+    "type": "custom_cad",
+    "unit": "m",
+    "parameters": {
+      "characteristic_length": 66.8,
+      "reference_area": 443.0,
+      "surface_enclosure_only": 1
+    },
+    "cad_file": "D:/Users/666/Documents/New project 2/cfd-agent/outputs/a350_10km/solidworks/geometry.step"
+  },
+  "domain": {
+    "type": "external",
+    "upstream_length_ratio": 3.0,
+    "downstream_length_ratio": 6.0,
+    "side_length_ratio": 3.0
+  },
+  "fluid": {
+    "name": "air_10km_isa",
+    "density": 0.4135,
+    "viscosity": 1.46e-5,
+    "temperature": 223.15,
+    "pressure": 26436.0
+  },
+  "motion": {
+    "type": "stationary",
+    "inlet_velocity": 254.6,
+    "attack_angle_deg": 0.0
+  },
+  "mesh": {
+    "boundary_layer_enabled": true,
+    "target_y_plus": 30.0,
+    "layers": 10,
+    "growth_rate": 1.2,
+    "max_skewness": 0.9,
+    "min_orthogonal_quality": 0.1
+  },
+  "solver": {
+    "steady": true,
+    "solver_type": "density_based",
+    "turbulence_model": "k_omega_sst",
+    "residual_target": 1e-5,
+    "max_iterations": 1000
+  },
+  "outputs": {
+    "requested": [
+      "drag_coefficient",
+      "lift_coefficient",
+      "pressure_contour",
+      "velocity_contour",
+      "residuals",
+      "report"
+    ]
+  }
+}

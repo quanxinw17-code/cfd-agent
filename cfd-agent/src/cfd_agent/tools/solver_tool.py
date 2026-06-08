@@ -8,6 +8,7 @@ from pathlib import Path
 
 from cfd_agent.core.logging_config import configure_task_logger
 from cfd_agent.tools.file_tool import ensure_dir
+from cfd_agent.tools.process_ui import foreground_enabled
 
 
 def run_fluent(journal_info: dict, output_dir: str, dry_run: bool = False) -> dict:
@@ -49,7 +50,8 @@ def run_fluent(journal_info: dict, output_dir: str, dry_run: bool = False) -> di
         logger.error(error)
         return {"case_file": None, "data_file": None, "log_file": str(log_file), "success": False, "error": error}
 
-    command = [str(resolved), "3ddp", "-g", "-i", str(Path(journal_info["solve_journal"]).resolve())]
+    processor_count = os.getenv("FLUENT_PROCESSOR_COUNT", "4")
+    command = _build_fluent_command(str(resolved), Path(journal_info["solve_journal"]).resolve(), processor_count)
     logger.info("Running Fluent command: %s", " ".join(command))
     with open(log_file, "a", encoding="utf-8") as handle:
         completed = subprocess.run(command, cwd=output, text=True, stdout=handle, stderr=subprocess.STDOUT, check=False)
@@ -60,6 +62,14 @@ def run_fluent(journal_info: dict, output_dir: str, dry_run: bool = False) -> di
     if data_file.exists():
         shutil.copy2(data_file, paired_data_file)
     return {"case_file": str(case_file), "data_file": str(data_file), "paired_data_file": str(paired_data_file), "log_file": str(log_file), "success": True, "error": None}
+
+
+def _build_fluent_command(executable: str, journal: Path, processor_count: str) -> list[str]:
+    command = [executable, "3ddp"]
+    if not foreground_enabled():
+        command.append("-g")
+    command.extend([f"-t{processor_count}", "-i", str(journal)])
+    return command
 
 
 def _export_solver_csvs(log_file: Path, post_dir: Path) -> None:

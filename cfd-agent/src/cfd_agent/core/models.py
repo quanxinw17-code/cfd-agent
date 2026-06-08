@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import math
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class GeometryConfig(BaseModel):
@@ -47,6 +49,38 @@ class MeshConfig(BaseModel):
     min_orthogonal_quality: float = 0.15
 
 
+class MeshImitationConfig(BaseModel):
+    enabled: bool = False
+    reference_file: Optional[str] = None
+    reference_characteristic_length: Optional[float] = None
+    scale_mode: Literal["characteristic_length"] = "characteristic_length"
+
+
+class DomainImitationConfig(BaseModel):
+    enabled: bool = False
+    reference_file: Optional[str] = None
+    manual_flow_direction: Optional[List[float]] = None
+
+    @field_validator("manual_flow_direction", mode="before")
+    @classmethod
+    def reject_boolean_flow_direction_components(cls, value: object) -> object:
+        if not isinstance(value, Iterable) or isinstance(value, (str, bytes, bytearray, Mapping)):
+            return value
+        components = list(value)
+        if any(isinstance(component, bool) for component in components):
+            raise ValueError("manual_flow_direction components must be numeric, not boolean")
+        return components
+
+    @field_validator("manual_flow_direction")
+    @classmethod
+    def validate_manual_flow_direction(cls, value: Optional[List[float]]) -> Optional[List[float]]:
+        if value is None:
+            return None
+        if len(value) != 3 or not all(math.isfinite(component) for component in value) or not any(component != 0 for component in value):
+            raise ValueError("manual_flow_direction must be a finite non-zero three-component vector")
+        return [float(component) for component in value]
+
+
 class SolverConfig(BaseModel):
     steady: bool = True
     solver_type: Literal["pressure_based", "density_based"] = "pressure_based"
@@ -75,6 +109,8 @@ class SimulationTask(BaseModel):
     fluid: FluidConfig = Field(default_factory=FluidConfig)
     motion: MotionConfig
     mesh: MeshConfig = Field(default_factory=MeshConfig)
+    mesh_imitation: MeshImitationConfig = Field(default_factory=MeshImitationConfig)
+    domain_imitation: DomainImitationConfig = Field(default_factory=DomainImitationConfig)
     solver: SolverConfig = Field(default_factory=SolverConfig)
     outputs: OutputConfig = Field(default_factory=OutputConfig)
 
@@ -82,4 +118,3 @@ class SimulationTask(BaseModel):
 def load_simulation_task(path: str | Path) -> SimulationTask:
     data = Path(path).read_text(encoding="utf-8")
     return SimulationTask.model_validate_json(data)
-

@@ -6,6 +6,7 @@ Parasolid files when run in a Windows SolidWorks COM environment.
 """
 
 import math
+import os
 from pathlib import Path
 
 GEOMETRY_TYPE = "{{ task.geometry.type }}"
@@ -93,7 +94,14 @@ def main():
         raise RuntimeError("pywin32 is required for SolidWorks COM automation") from exc
 
     sw = win32com.client.Dispatch("SldWorks.Application")
-    sw.Visible = True
+    foreground = os.getenv("CFD_AGENT_FOREGROUND", "true").strip().lower() not in {"0", "false", "no", "off"}
+    sw.Visible = foreground
+    sw.UserControl = foreground
+    if foreground:
+        try:
+            sw.Frame().Activate()
+        except Exception:
+            pass
     model = _new_part(sw)
     if GEOMETRY_TYPE == "sphere":
         _create_sphere(model)

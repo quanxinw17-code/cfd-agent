@@ -1,0 +1,22 @@
+{
+  "task_id": "custom_cad_external_flow_001",
+  "geometry": {
+    "type": "custom_cad",
+    "unit": "m",
+    "parameters": {
+      "characteristic_length": 0.1
+    },
+    "cad_file": "D:/models/body.step"
+  },
+  "domain": {
+    "type": "external",
+    "upstream_length_ratio": 5.0,
+    "downstream_length_ratio": 15.0,
+    "side_length_ratio": 5.0
+  },
+  "motion": {
+    "type": "stationary",
+    "inlet_velocity": 30.0,
+    "attack_angle_deg": 0.0
+  }
+}

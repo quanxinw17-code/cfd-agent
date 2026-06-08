@@ -10,8 +10,11 @@ from cfd_agent.core.physics import calculate_mach_number, calculate_reynolds_num
 from cfd_agent.core.state import WorkflowState
 from cfd_agent.core.validators import validate_simulation_task
 from cfd_agent.tools.file_tool import ensure_dir
+from cfd_agent.tools.custom_cad_tool import import_custom_cad
+from cfd_agent.tools.domain_imitation_tool import analyze_reference_domain, write_domain_comparison
 from cfd_agent.tools.fluent_setup_tool import create_fluent_journal
 from cfd_agent.tools.fluent_meshing_tool import generate_mesh_with_fluent_meshing
+from cfd_agent.tools.mesh_imitation_tool import analyze_reference_mesh, write_mesh_comparison
 from cfd_agent.tools.postprocess_tool import postprocess_results
 from cfd_agent.tools.report_tool import generate_report
 from cfd_agent.tools.solver_tool import run_fluent
@@ -19,7 +22,18 @@ from cfd_agent.tools.solidworks_tool import create_solidworks_model
 from cfd_agent.tools.spaceclaim_tool import create_external_flow_domain
 
 
-STAGE_ORDER = ("validate", "solidworks", "spaceclaim", "meshing", "fluent_setup", "solver", "postprocess", "report")
+STAGE_ORDER = (
+    "validate",
+    "solidworks",
+    "domain_imitation",
+    "spaceclaim",
+    "mesh_imitation",
+    "meshing",
+    "fluent_setup",
+    "solver",
+    "postprocess",
+    "report",
+)
 
 
 def run_simulation(task: SimulationTask, output_dir: str, dry_run: bool = False, from_stage: str | None = None, to_stage: str | None = None) -> dict:
@@ -37,7 +51,7 @@ def run_simulation(task: SimulationTask, output_dir: str, dry_run: bool = False,
     physics_summary: dict | None = None
     results = {"drag_coefficient": None, "lift_coefficient": None}
     stage_state = _load_pipeline_state(output)
-    stage_outputs: dict[str, dict] = dict(stage_state.get("stage_outputs", {}))
+    stage_outputs: dict[str, dict] = _prune_stage_outputs(stage_state.get("stage_outputs", {}), from_stage)
 
     workflow_result = {
         "task_id": task.task_id,
@@ -86,7 +100,10 @@ def run_simulation(task: SimulationTask, output_dir: str, dry_run: bool = False,
             workflow_result["physics_summary"] = physics_summary
 
         if _should_run("solidworks", from_stage, to_stage):
-            solidworks_info = create_solidworks_model(task, str(output), dry_run=dry_run)
+            if task.geometry.type == "custom_cad":
+                solidworks_info = import_custom_cad(task, str(output), dry_run=dry_run)
+            else:
+                solidworks_info = create_solidworks_model(task, str(output), dry_run=dry_run)
             stage_outputs["solidworks"] = solidworks_info
             _apply_solidworks_files(files, solidworks_info)
             if not solidworks_info.get("success"):
@@ -101,14 +118,41 @@ def run_simulation(task: SimulationTask, output_dir: str, dry_run: bool = False,
             solidworks_info = _require_stage_output(stage_outputs, "solidworks", from_stage)
             _apply_solidworks_files(files, solidworks_info)
 
+        if _should_run("domain_imitation", from_stage, to_stage):
+            domain_imitation_info = analyze_reference_domain(task, str(output), dry_run=dry_run)
+            stage_outputs["domain_imitation"] = domain_imitation_info
+            _apply_domain_imitation_files(files, domain_imitation_info)
+            if not domain_imitation_info.get("success"):
+                errors.append(domain_imitation_info.get("error") or "reference domain imitation analysis failed")
+                state = WorkflowState.FAILED
+                return _finish(workflow_result, "failed", state, output, task, logger, started)
+            state = WorkflowState.DOMAIN_IMITATION_ANALYZED
+            _checkpoint(output, workflow_result, state)
+            if _stop_at("domain_imitation", to_stage):
+                return _finish(workflow_result, "success", state, output, task, logger, started)
+        else:
+            domain_imitation_info = _domain_imitation_stage_output(task, stage_outputs, from_stage)
+            _apply_domain_imitation_files(files, domain_imitation_info)
+
         if _should_run("spaceclaim", from_stage, to_stage):
-            domain_info = create_external_flow_domain(task, solidworks_info, str(output), dry_run=dry_run)
+            domain_info = create_external_flow_domain(
+                task,
+                solidworks_info,
+                str(output),
+                dry_run=dry_run,
+                imitation_info=domain_imitation_info,
+            )
             stage_outputs["spaceclaim"] = domain_info
             _apply_spaceclaim_files(files, domain_info)
             if not domain_info.get("success"):
                 errors.append(domain_info.get("error") or "SpaceClaim domain generation failed")
                 state = WorkflowState.FAILED
                 return _finish(workflow_result, "failed", state, output, task, logger, started)
+            comparison_file = write_domain_comparison(domain_imitation_info, domain_info, output)
+            if comparison_file:
+                domain_imitation_info["comparison_file"] = str(comparison_file)
+                stage_outputs["domain_imitation"] = domain_imitation_info
+                files["domain_imitation_comparison"] = str(comparison_file)
             state = WorkflowState.SPACECLAIM_DOMAIN_CREATED
             _checkpoint(output, workflow_result, state)
             if _stop_at("spaceclaim", to_stage):
@@ -117,14 +161,34 @@ def run_simulation(task: SimulationTask, output_dir: str, dry_run: bool = False,
             domain_info = _require_stage_output(stage_outputs, "spaceclaim", from_stage)
             _apply_spaceclaim_files(files, domain_info)
 
+        if _should_run("mesh_imitation", from_stage, to_stage):
+            imitation_info = analyze_reference_mesh(task, str(output), dry_run=dry_run)
+            stage_outputs["mesh_imitation"] = imitation_info
+            _apply_mesh_imitation_files(files, imitation_info)
+            if not imitation_info.get("success"):
+                errors.append(imitation_info.get("error") or "reference mesh imitation analysis failed")
+                state = WorkflowState.FAILED
+                return _finish(workflow_result, "failed", state, output, task, logger, started)
+            state = WorkflowState.MESH_IMITATION_ANALYZED
+            _checkpoint(output, workflow_result, state)
+            if _stop_at("mesh_imitation", to_stage):
+                return _finish(workflow_result, "success", state, output, task, logger, started)
+        else:
+            imitation_info = _mesh_imitation_stage_output(task, stage_outputs, from_stage)
+            _apply_mesh_imitation_files(files, imitation_info)
+
         if _should_run("meshing", from_stage, to_stage):
-            mesh_info = generate_mesh_with_fluent_meshing(task, domain_info, str(output), dry_run=dry_run)
+            mesh_info = generate_mesh_with_fluent_meshing(task, domain_info, str(output), dry_run=dry_run, imitation_info=imitation_info)
             stage_outputs["meshing"] = mesh_info
             _apply_mesh_files(files, mesh_info)
             if not mesh_info.get("success"):
                 errors.append(mesh_info.get("error") or "Fluent Meshing failed")
                 state = WorkflowState.FAILED
                 return _finish(workflow_result, "failed", state, output, task, logger, started)
+            comparison_file = write_mesh_comparison(imitation_info, mesh_info, output)
+            if comparison_file:
+                imitation_info["comparison_file"] = str(comparison_file)
+                files["mesh_imitation_comparison"] = str(comparison_file)
             state = WorkflowState.FLUENT_MESH_CREATED
             _checkpoint(output, workflow_result, state)
             if _stop_at("meshing", to_stage):
@@ -231,6 +295,17 @@ def _load_pipeline_state(output: Path) -> dict:
         return json.load(handle)
 
 
+def _prune_stage_outputs(stage_outputs: dict, from_stage: str) -> dict[str, dict]:
+    if not isinstance(stage_outputs, dict):
+        return {}
+    from_index = STAGE_ORDER.index(from_stage)
+    return {
+        stage: output
+        for stage, output in stage_outputs.items()
+        if stage in STAGE_ORDER and STAGE_ORDER.index(stage) < from_index
+    }
+
+
 def _checkpoint(output: Path, workflow_result: dict, state: WorkflowState) -> None:
     payload = {
         "task_id": workflow_result["task_id"],
@@ -256,10 +331,34 @@ def _require_stage_output(stage_outputs: dict[str, dict], stage: str, from_stage
     return info
 
 
+def _domain_imitation_stage_output(task: SimulationTask, stage_outputs: dict[str, dict], from_stage: str) -> dict:
+    info = stage_outputs.get("domain_imitation")
+    if info:
+        return info
+    if task.domain_imitation.enabled:
+        raise ValueError(
+            f"Cannot start from {from_stage!r}: task.domain_imitation.enabled is true but missing prior stage output "
+            "'domain_imitation' in pipeline_state.json; run with from_stage='domain_imitation' first"
+        )
+    return {"success": True, "skipped": True, "enabled": False, "effective_domain_settings": {}}
+
+
+def _mesh_imitation_stage_output(task: SimulationTask, stage_outputs: dict[str, dict], from_stage: str) -> dict:
+    info = stage_outputs.get("mesh_imitation")
+    if info:
+        return info
+    if task.mesh_imitation.enabled:
+        raise ValueError(
+            f"Cannot start from {from_stage!r}: task.mesh_imitation.enabled is true but missing prior stage output "
+            "'mesh_imitation' in pipeline_state.json; run with from_stage='mesh_imitation' first"
+        )
+    return {"success": True, "skipped": True, "effective_mesh_settings": {}}
+
+
 def _apply_solidworks_files(files: dict, solidworks_info: dict) -> None:
     files["solidworks_script"] = solidworks_info.get("script_file")
     files["solidworks_native"] = solidworks_info.get("native_file") or solidworks_info.get("planned_native_file")
-    files["geometry"] = solidworks_info.get("step_file") or solidworks_info.get("planned_step_file")
+    files["geometry"] = solidworks_info.get("source_file") or solidworks_info.get("step_file") or solidworks_info.get("planned_step_file")
     files["parasolid"] = solidworks_info.get("parasolid_file") or solidworks_info.get("planned_parasolid_file")
     files["geometry_metadata"] = solidworks_info.get("metadata_file")
 
@@ -270,11 +369,28 @@ def _apply_spaceclaim_files(files: dict, domain_info: dict) -> None:
     files["named_selections"] = domain_info.get("named_selections_file")
 
 
+def _apply_domain_imitation_files(files: dict, domain_imitation_info: dict) -> None:
+    if domain_imitation_info.get("skipped"):
+        return
+    files["domain_reference_profile"] = domain_imitation_info.get("profile_file")
+    files["scaled_domain_settings"] = domain_imitation_info.get("scaled_settings_file")
+    files["domain_imitation_comparison"] = domain_imitation_info.get("comparison_file")
+
+
 def _apply_mesh_files(files: dict, mesh_info: dict) -> None:
     files["mesh"] = mesh_info.get("mesh_file") or mesh_info.get("planned_mesh_file")
     files["mesh_case"] = mesh_info.get("case_file") or mesh_info.get("planned_case_file")
     files["fluent_meshing_journal"] = mesh_info.get("meshing_journal")
     files["mesh_quality_report"] = mesh_info.get("quality_report_file")
+
+
+def _apply_mesh_imitation_files(files: dict, imitation_info: dict) -> None:
+    if imitation_info.get("skipped"):
+        return
+    files["mesh_reference_profile"] = imitation_info.get("profile_file")
+    files["scaled_mesh_settings"] = imitation_info.get("scaled_settings_file")
+    if imitation_info.get("comparison_file"):
+        files["mesh_imitation_comparison"] = imitation_info.get("comparison_file")
 
 
 def _apply_solver_files(files: dict, solver_info: dict) -> None:
